@@ -1,0 +1,22 @@
+<%= form_with(model: discussion_thread) do |form| %>
+  <% if discussion_thread.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(discussion_thread.errors.count, "error") %> prohibited this discussion_thread from being saved:</h2>
+
+      <ul>
+        <% discussion_thread.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :title, style: "display: block" %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

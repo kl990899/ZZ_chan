@@ -1,0 +1,11 @@
+<% content_for :title, "New discussion thread" %>
+
+<h1>New discussion thread</h1>
+
+<%= render "form", discussion_thread: @discussion_thread %>
+
+<br>
+
+<div>
+  <%= link_to "Back to discussion threads", discussion_threads_path %>
+</div>

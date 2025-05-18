@@ -1,0 +1,12 @@
+<% content_for :title, "Editing discussion thread" %>
+
+<h1>Editing discussion thread</h1>
+
+<%= render "form", discussion_thread: @discussion_thread %>
+
+<br>
+
+<div>
+  <%= link_to "Show this discussion thread", @discussion_thread %> |
+  <%= link_to "Back to discussion threads", discussion_threads_path %>
+</div>
