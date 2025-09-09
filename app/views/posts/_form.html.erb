@@ -12,8 +12,13 @@
     </div>
 
     <div class="form-row">
-      <label class="form-label">附加圖檔</label>
-      <%= f.file_field :image %>
+      <label class="form-label">附加檔案 (檔案大小不能超過 5MB)</label>
+      <div class="file-upload-section">
+        <%= f.file_field :file, accept: "image/*,video/*", class: "file-input", id: "file_input" %>
+        <div class="file-info">
+          <small>支援格式：圖片 (JPEG, JPG, PNG, GIF, WebP) 或影片 (MP4, WebM)</small>
+        </div>
+      </div>
     </div>
 
     <div class="form-submit">
@@ -87,4 +92,35 @@
   .submit-button:hover {
     background-color: #f8f1e6;
   }
+
+  .file-upload-section {
+    flex: 1;
+  }
+
+  .file-input {
+    flex: 1;
+    padding: 4px;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  .file-info {
+    color: #666;
+    font-size: 12px;
+  }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('file_input');
+    
+    // 檔案選擇時的預覽功能（可選）
+    fileInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        console.log('選擇的檔案類型：', file.type);
+        console.log('檔案大小：', (file.size / 1024 / 1024).toFixed(2) + ' MB');
+      }
+    });
+  });
+</script>

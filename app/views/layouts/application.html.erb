@@ -17,6 +17,118 @@
   </head>
 
   <body>
-    <%= yield %>
+    <!-- R18 警訊覆蓋層 -->
+    <div id="r18-overlay" style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 10000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    ">
+      <div style="
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 500px;
+        margin: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      ">
+        <div style="
+          color: #ff0000;
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 20px;
+        ">
+          ⚠️ 年齡限制警告 ⚠️
+        </div>
+        
+        <div style="
+          color: #333333;
+          font-size: 16px;
+          line-height: 1.5;
+          margin-bottom: 30px;
+        ">
+          本網站可能包含成人內容，僅限18歲以上用戶瀏覽。<br>
+          請確認您已年滿18歲，並同意繼續瀏覽。
+        </div>
+        
+        <div style="display: flex; gap: 15px; justify-content: center;">
+          <button id="enter-btn" style="
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+          " onmouseover="this.style.backgroundColor='#218838'" onmouseout="this.style.backgroundColor='#28a745'">
+            我已滿18歲，進入網站
+          </button>
+          
+          <button id="exit-btn" style="
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+          " onmouseover="this.style.backgroundColor='#c82333'" onmouseout="this.style.backgroundColor='#dc3545'">
+            離開網站
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 主要內容區域 -->
+    <div id="main-content" style="display: none;">
+      <%= yield %>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const overlay = document.getElementById('r18-overlay');
+        const mainContent = document.getElementById('main-content');
+        const enterBtn = document.getElementById('enter-btn');
+        const exitBtn = document.getElementById('exit-btn');
+        
+        // 檢查是否已經確認過年齡
+        if (localStorage.getItem('ageConfirmed') === 'true') {
+          overlay.style.display = 'none';
+          mainContent.style.display = 'block';
+        }
+        
+        // 進入網站按鈕
+        enterBtn.addEventListener('click', function() {
+          localStorage.setItem('ageConfirmed', 'true');
+          overlay.style.display = 'none';
+          mainContent.style.display = 'block';
+        });
+        
+        // 離開網站按鈕
+        exitBtn.addEventListener('click', function() {
+          // 可以重定向到其他網站或顯示離開訊息
+          window.location.href = 'https://www.google.com';
+        });
+        
+        // 防止用戶通過其他方式繞過警告
+        document.addEventListener('keydown', function(e) {
+          if (overlay.style.display !== 'none') {
+            e.preventDefault();
+            return false;
+          }
+        });
+      });
+    </script>
   </body>
 </html>

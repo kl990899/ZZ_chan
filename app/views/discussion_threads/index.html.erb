@@ -77,6 +77,20 @@
     max-width: 100%;
   }
 
+  .post-video {
+    margin-top: 8px;
+    border: 1px solid #ddd;
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+    cursor: pointer;
+    transition: max-width 0.3s ease;
+  }
+
+  .post-video.expanded {
+    max-width: 100%;
+  }
+
   a {
     color: #0000cc;
     text-decoration: none;
@@ -84,6 +98,50 @@
 
   a:hover {
     text-decoration: underline;
+  }
+
+  /* 分頁樣式 */
+  .pagination-container {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .pagination {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+  }
+
+  .pagination li {
+    display: inline;
+    margin: 0 2px;
+  }
+
+  .pagination a, .pagination span {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 0 2px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    color: #333;
+    background-color: #fff;
+    border-radius: 3px;
+  }
+
+  .pagination a:hover {
+    background-color: #f5f5f5;
+    text-decoration: none;
+  }
+
+  .pagination .current {
+    background-color: #d45f00;
+    color: white;
+    border-color: #d45f00;
+  }
+
+  .pagination .disabled {
+    color: #ccc;
+    cursor: not-allowed;
   }
 </style>
 
@@ -105,8 +163,13 @@
       <%= f.text_area :content, rows: 3 %>
     </div>
     <div>
-      <%= f.label :image, "圖片" %><br>
-      <%= f.file_field :image %>
+      <%= f.label :file, "附加檔案 (檔案大小不能超過 5MB)" %><br>
+      <div style="margin-top: 5px;">
+        <%= f.file_field :file, accept: "image/*,video/*", id: "new_thread_file_input" %>
+        <div style="color: #666; font-size: 12px; margin-top: 3px;">
+          支援格式：圖片 (JPEG, JPG, PNG, GIF, WebP) 或影片 (MP4, WebM)
+        </div>
+      </div>
     </div>
     <div>
       <%= f.submit "送出" %>
@@ -131,10 +194,17 @@
                 <% dimensions = [nil, nil] %>
               <% end %>
               <span>
-                檔名：
+                圖片檔名：
                 <%= link_to blob.filename.to_s, url_for(post.image), target: "_blank", style: "color:blue" %>
                 - (<%= number_to_human_size(blob.byte_size) %>,
-                <%= "#{dimensions[0]}x#{dimensions[1]}" if dimensions.all? %>)
+                <%= "#{dimensions[0]}x#{dimensions[1]}" if dimensions && dimensions.all? %>)
+              </span><br>
+            <% elsif post.video.attached? %>
+              <% blob = post.video.blob %>
+              <span>
+                影片檔名：
+                <%= link_to blob.filename.to_s, url_for(post.video), target: "_blank", style: "color:blue" %>
+                - (<%= number_to_human_size(blob.byte_size) %>)
               </span><br>
             <% end %>
             發表於：<%= post.created_at.strftime("%Y/%m/%d(%a) %H:%M:%S") %>
@@ -146,6 +216,11 @@
           </div>
           <% if post.image.attached? %>
             <%= image_tag url_for(post.image), class: "post-image" %>
+          <% elsif post.video.attached? %>
+            <video controls class="post-video" preload="metadata">
+              <source src="<%= url_for(post.video) %>" type="<%= post.video.blob.content_type %>">
+              您的瀏覽器不支援影片播放。
+            </video>
           <% end %>
         </div>
       <% end %>
@@ -153,12 +228,36 @@
   <% end %>
 </ul>
 
+<!-- 分頁按鈕 -->
+<div class="pagination-container">
+  <%= paginate @discussion_threads %>
+</div>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    // 圖片點擊放大功能
     document.querySelectorAll(".post-image").forEach(function (img) {
       img.addEventListener("click", function () {
         img.classList.toggle("expanded");
       });
+    });
+    
+    // 影片點擊放大功能
+    document.querySelectorAll(".post-video").forEach(function (video) {
+      video.addEventListener("click", function () {
+        video.classList.toggle("expanded");
+      });
+    });
+    
+    // 新串表單檔案選擇預覽
+    const newThreadFileInput = document.getElementById('new_thread_file_input');
+    
+    newThreadFileInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        console.log('選擇的檔案類型：', file.type);
+        console.log('檔案大小：', (file.size / 1024 / 1024).toFixed(2) + ' MB');
+      }
     });
   });
 </script>
