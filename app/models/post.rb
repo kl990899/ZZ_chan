@@ -14,6 +14,39 @@ class Post < ApplicationRecord
   # 確保不能同時上傳圖片和影片
   validate :cannot_have_both_image_and_video
   
+  # 檢查是否包含 YouTube 連結
+  def has_youtube_links?
+    return false if content.blank?
+    
+    youtube_patterns = [
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/,
+      /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]+)/,
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]+)/
+    ]
+    
+    youtube_patterns.any? { |pattern| content.match?(pattern) }
+  end
+  
+  # 獲取 YouTube 影片 ID
+  def youtube_video_ids
+    return [] if content.blank?
+    
+    video_ids = []
+    youtube_patterns = [
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/,
+      /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]+)/,
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]+)/
+    ]
+    
+    youtube_patterns.each do |pattern|
+      content.scan(pattern).each do |match|
+        video_ids << match[0] if match[0]
+      end
+    end
+    
+    video_ids.uniq
+  end
+  
   private
   
   def validate_image_content_type
