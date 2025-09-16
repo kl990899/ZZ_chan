@@ -102,7 +102,6 @@ GEM
       irb (~> 1.10)
       reline (>= 0.3.8)
     drb (2.2.1)
-    error_highlight (0.7.0)
     erubi (1.13.1)
     fastimage (2.4.0)
     globalid (1.2.1)
@@ -322,7 +321,6 @@ DEPENDENCIES
   brakeman
   capybara
   debug
-  error_highlight (>= 0.4.0)
   fastimage
   jbuilder
   kaminari

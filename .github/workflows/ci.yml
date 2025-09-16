@@ -19,4 +19,7 @@ jobs:
           bundler-cache: true
 
       - name: Run Rubocop
-        run: bundle exec rubocop -f github
+        run: |
+          bundle config set --local deployment 'false'
+          bundle install --jobs 4 --retry 3
+          bundle exec rubocop -f github
