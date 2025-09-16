@@ -29,6 +29,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: opacity 0.3s ease-in-out;
     ">
       <div style="
         background-color: #ffffff;
@@ -96,30 +97,78 @@
     </div>
 
     <script>
+      // 立即檢查年齡驗證狀態，避免閃爍
+      (function() {
+        const overlay = document.getElementById('r18-overlay');
+        const mainContent = document.getElementById('main-content');
+        
+        // 檢查是否已經確認過年齡
+        if (localStorage.getItem('ageConfirmed') === 'true') {
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            overlay.style.display = 'none';
+            mainContent.style.display = 'block';
+          }, 300);
+        }
+      })();
+      
       document.addEventListener('DOMContentLoaded', function() {
         const overlay = document.getElementById('r18-overlay');
         const mainContent = document.getElementById('main-content');
         const enterBtn = document.getElementById('enter-btn');
         const exitBtn = document.getElementById('exit-btn');
         
-        // 檢查是否已經確認過年齡
+        // 再次檢查年齡驗證狀態（防止 localStorage 延遲載入）
         if (localStorage.getItem('ageConfirmed') === 'true') {
-          overlay.style.display = 'none';
-          mainContent.style.display = 'block';
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            overlay.style.display = 'none';
+            mainContent.style.display = 'block';
+          }, 300);
         }
         
         // 進入網站按鈕
         enterBtn.addEventListener('click', function() {
-          localStorage.setItem('ageConfirmed', 'true');
-          overlay.style.display = 'none';
-          mainContent.style.display = 'block';
+          try {
+            localStorage.setItem('ageConfirmed', 'true');
+            // 設定過期時間（24小時）
+            localStorage.setItem('ageConfirmedTime', Date.now().toString());
+          } catch (e) {
+            console.warn('無法存取 localStorage，使用 sessionStorage 作為備用');
+            sessionStorage.setItem('ageConfirmed', 'true');
+          }
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            overlay.style.display = 'none';
+            mainContent.style.display = 'block';
+          }, 300);
         });
         
         // 離開網站按鈕
         exitBtn.addEventListener('click', function() {
+          // 清除驗證狀態
+          try {
+            localStorage.removeItem('ageConfirmed');
+            localStorage.removeItem('ageConfirmedTime');
+          } catch (e) {
+            sessionStorage.removeItem('ageConfirmed');
+          }
           // 可以重定向到其他網站或顯示離開訊息
           window.location.href = 'https://www.google.com';
         });
+        
+        // 檢查驗證是否過期（24小時）
+        const confirmedTime = localStorage.getItem('ageConfirmedTime');
+        if (confirmedTime) {
+          const timeDiff = Date.now() - parseInt(confirmedTime);
+          const hoursDiff = timeDiff / (1000 * 60 * 60);
+          if (hoursDiff > 24) {
+            localStorage.removeItem('ageConfirmed');
+            localStorage.removeItem('ageConfirmedTime');
+            overlay.style.display = 'flex';
+            mainContent.style.display = 'none';
+          }
+        }
         
         // 防止用戶通過其他方式繞過警告
         document.addEventListener('keydown', function(e) {
