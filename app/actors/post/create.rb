@@ -26,7 +26,6 @@ class Post::Create < Actor
     post.name = '無名' if post.name.blank?
     post.ip_address = request_ip
     post.hashed_ip = generate_hashed_ip
-    post.save!
   end
 
   def post_params
