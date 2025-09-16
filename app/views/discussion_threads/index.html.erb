@@ -1,244 +1,87 @@
-<style>
-  body {
-    background-color: #fdf9ed;
-    font-family: "Arial", sans-serif;
-    color: #400000;
-  }
+<!-- 樣式已移至 application.css -->
 
-  h1 {
-    color: #800000;
-    margin-bottom: 15px;
-  }
+<h1>討論板</h1>
 
-  .thread-form, .post-form {
-    background-color: #eee5db;
-    padding: 12px;
-    border: 1px solid #d4bfa3;
-    margin-bottom: 20px;
-  }
-
-  .thread-list {
-    list-style: none;
-    padding-left: 0;
-  }
-
-  .thread-list li {
-    background-color: #fffaf0;
-    border: 1px solid #ccbbbb;
-    margin-bottom: 20px;
-    padding: 10px;
-  }
-
-  .thread-list li h2 {
-    margin: 0 0 5px 0;
-    font-size: 18px;
-    color: #800000;
-  }
-
-  .thread-list li small {
-    color: #888;
-    font-size: 12px;
-  }
-
-  .post-box {
-    border: 1px solid #ccbbbb;
-    background-color: #fffaf0;
-    padding: 10px;
-    margin-top: 10px;
-    font-size: 14px;
-  }
-
-  .post-header {
-    font-size: 0.9em;
-    color: #555;
-    margin-bottom: 4px;
-  }
-
-  .post-id {
-    color: #a00;
-    font-weight: bold;
-    margin-left: 10px;
-  }
-
-  .post-name {
-    color: #117743;
-    font-weight: bold;
-  }
-
-  .post-image {
-    margin-top: 8px;
-    border: 1px solid #ddd;
-    max-width: 250px;
-    cursor: pointer;
-    transition: max-width 0.3s ease;
-  }
-
-  .post-image.expanded {
-    max-width: 100%;
-  }
-
-  .post-video {
-    margin-top: 8px;
-    border: 1px solid #ddd;
-    max-width: 560px;
-    max-height: 315px;
-    width: 100%;
-    height: auto;
-    cursor: pointer;
-    transition: max-width 0.3s ease;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-
-  .post-video.expanded {
-    max-width: 100%;
-    max-height: none;
-  }
-
-  a {
-    color: #0000cc;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  /* 分頁樣式 */
-  .pagination-container {
-    text-align: center;
-    margin: 20px 0;
-  }
-
-  .pagination {
-    display: inline-block;
-    padding: 0;
-    margin: 0;
-  }
-
-  .pagination li {
-    display: inline;
-    margin: 0 2px;
-  }
-
-  .pagination a, .pagination span {
-    display: inline-block;
-    padding: 6px 12px;
-    margin: 0 2px;
-    text-decoration: none;
-    border: 1px solid #ddd;
-    color: #333;
-    background-color: #fff;
-    border-radius: 3px;
-  }
-
-  .pagination a:hover {
-    background-color: #f5f5f5;
-    text-decoration: none;
-  }
-
-  .pagination .current {
-    background-color: #d45f00;
-    color: white;
-    border-color: #d45f00;
-  }
-
-  .pagination .disabled {
-    color: #ccc;
-    cursor: not-allowed;
-  }
-
-  /* YouTube 內嵌樣式 */
-  .youtube-container {
-    margin-top: 8px;
-  }
-
-  .youtube-embed {
-    margin-top: 8px;
-    border: 1px solid #ddd;
-    max-width: 560px;
-    width: 100%;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    overflow: hidden;
-  }
-
-  .youtube-video {
-    width: 100%;
-    height: 315px;
-    max-width: 560px;
-    border: none;
-    display: block;
-  }
-</style>
-
-<h1>討論串列表</h1>
-
+<!-- 建立新討論串表單 -->
 <div class="thread-form">
-  <h3>開新串</h3>
-  <%= form_with url: discussion_threads_path, local: true, multipart: true do |f| %>
-    <div>
-      <%= f.label :name, "名稱" %>
-      <%= f.text_field :name, placeholder: "未填視為匿名" %>
+  <%= form_with model: @discussion_thread, local: true do |form| %>
+    <div class="form-group">
+      <%= form.label :name, "發文者名稱 (可選)" %>
+      <%= form.text_field :name, class: "form-control", placeholder: "留空則顯示為匿名" %>
     </div>
-    <div>
-      <%= f.label :title, "標題" %>
-      <%= f.text_field :title, placeholder: "未填視為無題" %>
+    
+    <div class="form-group">
+      <%= form.label :title, "討論串標題 (可選)" %>
+      <%= form.text_field :title, class: "form-control", placeholder: "留空則顯示為無題" %>
     </div>
-    <div>
-      <%= f.label :content, "內容" %><br>
-      <%= f.text_area :content, rows: 3 %>
+    
+    <div class="form-group">
+      <%= form.label :content, "內容" %>
+      <%= form.text_area :content, class: "form-control", rows: 4, placeholder: "請輸入討論內容..." %>
     </div>
-    <div>
-      <%= f.label :file, "附加檔案 (檔案大小不能超過 5MB)" %><br>
-      <div style="margin-top: 5px;">
-        <%= f.file_field :file, accept: "image/*,video/*", id: "new_thread_file_input" %>
-        <div style="color: #666; font-size: 12px; margin-top: 3px;">
-          支援格式：圖片 (JPEG, JPG, PNG, GIF, WebP) 或影片 (MP4, WebM)
-        </div>
-      </div>
+    
+    <div class="form-group">
+      <%= form.label :file, "上傳圖片或影片 (可選)" %>
+      <%= form.file_field :file, class: "form-control", accept: "image/*,video/*" %>
+      <small style="color: #888; font-size: 0.9rem;">
+        支援格式：圖片 (JPEG, PNG, GIF, WebP) 或影片 (MP4, WebM)
+      </small>
     </div>
-    <div>
-      <%= f.submit "送出" %>
-    </div>
+    
+    <%= form.submit "建立討論串", class: "btn" %>
   <% end %>
 </div>
 
+<!-- 討論串列表 -->
 <ul class="thread-list">
   <% @discussion_threads.each do |thread| %>
     <% thread_data = discussion_thread_data(thread, view: :show) %>
-    <li>
-      <h2><%= link_to thread_data[:title].presence || "無題", discussion_thread_path(thread) %></h2>
-      <small>發文者: <%= thread_data[:name] %> | ID: <%= thread_data[:hash_ip] %> | <%= pluralize(thread_data[:posts_count], "則回應") %></small>
+    <li class="thread-item">
+      <div class="thread-header">
+        <h2 class="thread-title">
+          <%= link_to thread_data[:title].presence || "無題", discussion_thread_path(thread) %>
+        </h2>
+        <div class="thread-meta">
+          <span>發文者: <%= thread_data[:name] %></span>
+          <span>ID: <%= thread_data[:hash_ip] %></span>
+          <span><%= pluralize(thread_data[:posts_count], "則回應") %></span>
+          <span>建立於: <%= thread_data[:created_at] %></span>
+        </div>
+      </div>
 
-      <% thread.posts.order(created_at: :asc).first(5).each do |post| %>
+      <!-- 顯示前5則貼文 -->
+      <% thread.posts.order(created_at: :desc).first(5).each do |post| %>
         <% post_data = post_data(post) %>
         <div class="post-box">
           <div class="post-header">
             <% if post_data[:has_image] %>
-              <span>
+              <span class="file-info">
                 圖片檔名：
-                <%= link_to post_data[:image_filename], post_data[:image_url], target: "_blank", style: "color:blue" %>
+                <%= link_to post_data[:image_filename], post_data[:image_url], target: "_blank", class: "file-link" %>
                 - (<%= number_to_human_size(post_data[:image_byte_size]) %>)
               </span><br>
             <% elsif post_data[:has_video] %>
-              <span>
+              <span class="file-info">
                 影片檔名：
-                <%= link_to post_data[:video_filename], post_data[:video_url], target: "_blank", style: "color:blue" %>
+                <%= link_to post_data[:video_filename], post_data[:video_url], target: "_blank", class: "file-link" %>
                 - (<%= number_to_human_size(post_data[:video_byte_size]) %>)
               </span><br>
             <% end %>
-            發表於：<%= post_data[:created_at] %>
+            <span class="post-time">
+              發表於：<%= post_data[:created_at] %>
+            </span>
             <span class="post-id">ID: <%= post_data[:hashed_ip] %></span>
           </div>
-          <div>
+          
+          <div class="post-content">
             <span class="post-name"><%= post_data[:name].presence || "無名" %></span>：
             <p><%= simple_format(post_data[:content].presence || "無本文") %></p>
           </div>
+          
           <% if post_data[:has_image] %>
-            <img src="<%= post_data[:image_url] %>" class="post-image" alt="圖片">
+            <img src="<%= post_data[:image_url] %>" class="post-image" alt="圖片" onclick="toggleImageSize(this)">
           <% elsif post_data[:has_video] %>
-            <video controls class="post-video" preload="metadata">
+            <video controls class="post-video" preload="metadata" onclick="toggleVideoSize(this)">
               <source src="<%= post_data[:video_url] %>" type="<%= post_data[:video_content_type] %>">
               您的瀏覽器不支援影片播放。
             </video>
@@ -246,12 +89,12 @@
             <div class="youtube-container">
               <% post_data[:youtube_video_ids].each do |video_id| %>
                 <div class="youtube-embed">
-                  <iframe src="https://www.youtube.com/embed/<%= video_id %>" 
-                          width="560" 
-                          height="315" 
-                          frameborder="0" 
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                          allowfullscreen 
+                  <iframe src="https://www.youtube.com/embed/<%= video_id %>"
+                          width="560"
+                          height="315"
+                          frameborder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowfullscreen
                           class="youtube-video">
                   </iframe>
                 </div>
@@ -264,36 +107,19 @@
   <% end %>
 </ul>
 
-<!-- 分頁按鈕 -->
+<!-- 分頁 -->
 <div class="pagination-container">
   <%= paginate @discussion_threads %>
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // 圖片點擊放大功能
-    document.querySelectorAll(".post-image").forEach(function (img) {
-      img.addEventListener("click", function () {
-        img.classList.toggle("expanded");
-      });
-    });
-    
-    // 影片點擊放大功能
-    document.querySelectorAll(".post-video").forEach(function (video) {
-      video.addEventListener("click", function () {
-        video.classList.toggle("expanded");
-      });
-    });
-    
-    // 新串表單檔案選擇預覽
-    const newThreadFileInput = document.getElementById('new_thread_file_input');
-    
-    newThreadFileInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        console.log('選擇的檔案類型：', file.type);
-        console.log('檔案大小：', (file.size / 1024 / 1024).toFixed(2) + ' MB');
-      }
-    });
-  });
+  // 圖片點擊放大/縮小
+  function toggleImageSize(img) {
+    img.classList.toggle('expanded');
+  }
+  
+  // 影片點擊放大/縮小
+  function toggleVideoSize(video) {
+    video.classList.toggle('expanded');
+  }
 </script>

@@ -1,11 +1,11 @@
 <h1><%= @discussion_thread.title %></h1>
 
-<div class="reply-form">
+<div class="post-form">
   <h3>新增回應</h3>
   <%= render 'posts/form', post: @post, discussion_thread: @discussion_thread %>
 </div>
 
-<%= link_to "← 回串列表", root_path %>
+<%= link_to "← 回串列表", root_path, class: "btn btn-secondary" %>
 
 <h3>回應串</h3>
 
@@ -16,13 +16,13 @@
       <% if post_data[:has_image] %>
         <span>
           圖片檔名：
-          <%= link_to post_data[:image_filename], post_data[:image_url], target: "_blank", style: "color:blue" %>
+          <%= link_to post_data[:image_filename], post_data[:image_url], target: "_blank", class: "file-link" %>
           - (<%= number_to_human_size(post_data[:image_byte_size]) %>)
         </span><br>
       <% elsif post_data[:has_video] %>
         <span>
           影片檔名：
-          <%= link_to post_data[:video_filename], post_data[:video_url], target: "_blank", style: "color:blue" %>
+          <%= link_to post_data[:video_filename], post_data[:video_url], target: "_blank", class: "file-link" %>
           - (<%= number_to_human_size(post_data[:video_byte_size]) %>)
         </span><br>
       <% end %>
@@ -31,7 +31,7 @@
       <span class="post-id">ID: <%= post_data[:hashed_ip] %></span>
     </div>
 
-    <div>
+    <div class="post-content">
       <span class="post-name"><%= post_data[:name].presence || "無名" %></span>：
       <p><%= simple_format(post_data[:content].presence || "無本文") %></p>
     </div>

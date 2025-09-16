@@ -13,10 +13,441 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
-    <%= stylesheet_link_tag "application" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <style>
+      /* 內聯樣式確保載入 */
+      body { 
+        font-family: "Segoe UI", "Arial", sans-serif; 
+        background-color: #f5f0e8;
+        color: #2d1b00;
+        transition: all 0.3s ease;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+      
+      /* 確保整個頁面背景一致 */
+      html {
+        background-color: #f5f0e8;
+        margin: 0;
+        padding: 0;
+      }
+      .theme-toggle { 
+        position: fixed; 
+        top: 20px; 
+        right: 20px; 
+        z-index: 1000; 
+        background: #e8ddd0; 
+        border: 2px solid #c4b5a0; 
+        border-radius: 50px; 
+        padding: 8px 16px; 
+        cursor: pointer; 
+        font-size: 14px; 
+        color: #2d1b00; 
+        transition: all 0.3s ease; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+      }
+      .theme-toggle:hover { 
+        background: #6b0000; 
+        color: white; 
+        transform: translateY(-2px); 
+      }
+      .container { 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        padding: 0 20px; 
+        background-color: #f5f0e8;
+        min-height: 100vh;
+      }
+      h1 { 
+        color: #6b0000; 
+        margin-bottom: 30px; 
+        font-size: 2.5rem; 
+        font-weight: 700; 
+        text-align: center; 
+      }
+      .thread-form, .post-form { 
+        background: #e8ddd0; 
+        padding: 25px; 
+        border: 2px solid #c4b5a0; 
+        border-radius: 12px; 
+        margin-bottom: 30px; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+      }
+      .thread-list { 
+        list-style: none; 
+        padding: 0; 
+        margin: 0; 
+      }
+      .thread-item { 
+        background: #f8f3ed; 
+        border: 2px solid #b8a99a; 
+        border-radius: 12px; 
+        margin-bottom: 25px; 
+        padding: 25px; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+        transition: all 0.3s ease; 
+        position: relative; 
+      }
+      .thread-item:hover { 
+        transform: translateY(-4px); 
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15); 
+      }
+      .thread-title { 
+        margin: 0 0 8px 0; 
+        font-size: 1.4rem; 
+        font-weight: 600; 
+        color: #6b0000; 
+        text-decoration: none; 
+      }
+      .thread-title:hover { 
+        text-decoration: underline; 
+      }
+      .thread-meta { 
+        color: #666; 
+        font-size: 0.9rem; 
+        display: flex; 
+        gap: 15px; 
+        flex-wrap: wrap; 
+      }
+      .thread-meta span { 
+        background: #e8ddd0; 
+        padding: 4px 8px; 
+        border-radius: 6px; 
+        font-size: 0.8rem; 
+      }
+      .post-box { 
+        background: #f2ede6; 
+        border: 1px solid #c4b5a0; 
+        border-radius: 8px; 
+        padding: 20px; 
+        margin-top: 15px; 
+        transition: all 0.3s ease; 
+      }
+      .post-header { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        margin-bottom: 15px; 
+        padding-bottom: 10px; 
+        border-bottom: 1px solid #c4b5a0; 
+        flex-wrap: wrap; 
+        gap: 10px; 
+      }
+      .post-name { 
+        font-weight: 600; 
+        color: #0d5a2e; 
+        font-size: 1.1rem; 
+      }
+      .post-id { 
+        background: #6b0000; 
+        color: white; 
+        padding: 4px 8px; 
+        border-radius: 4px; 
+        font-size: 0.8rem; 
+        font-weight: 500; 
+      }
+      .post-content { 
+        margin: 15px 0; 
+        line-height: 1.7; 
+        word-wrap: break-word; 
+      }
+      .btn { 
+        background: #6b0000; 
+        color: white; 
+        border: none; 
+        padding: 12px 24px; 
+        border-radius: 8px; 
+        cursor: pointer; 
+        font-size: 1rem; 
+        font-weight: 500; 
+        transition: all 0.3s ease; 
+        text-decoration: none; 
+        display: inline-block; 
+        text-align: center; 
+      }
+      .btn:hover { 
+        background: #8b0000; 
+        transform: translateY(-2px); 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+      }
+      .btn-secondary { 
+        background: #e8ddd0; 
+        color: #2d1b00; 
+        border: 2px solid #c4b5a0; 
+      }
+      .form-group { 
+        margin-bottom: 20px; 
+      }
+      .form-label { 
+        display: block; 
+        margin-bottom: 8px; 
+        font-weight: 500; 
+        color: #2d1b00; 
+      }
+      .form-control { 
+        width: 100%; 
+        padding: 12px; 
+        border: 2px solid #c4b5a0; 
+        border-radius: 8px; 
+        background: #f8f3ed; 
+        color: #2d1b00; 
+        font-size: 1rem; 
+        transition: all 0.3s ease; 
+      }
+      .form-control:focus { 
+        outline: none; 
+        border-color: #6b0000; 
+        box-shadow: 0 0 0 3px rgba(107, 0, 0, 0.1); 
+      }
+      .post-image { 
+        max-width: 100%; 
+        height: auto; 
+        border-radius: 8px; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+        margin: 10px 0; 
+        transition: transform 0.3s ease; 
+        cursor: pointer;
+      }
+      .post-image:hover { 
+        transform: scale(1.02); 
+      }
+      .post-video { 
+        width: 100%; 
+        max-width: 600px; 
+        height: auto; 
+        border-radius: 8px; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+        margin: 10px 0; 
+        cursor: pointer;
+      }
+      .youtube-container { 
+        margin: 15px 0; 
+      }
+      .youtube-embed { 
+        position: relative; 
+        width: 100%; 
+        height: 0; 
+        padding-bottom: 56.25%; 
+        margin: 10px 0; 
+        border-radius: 8px; 
+        overflow: hidden; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+      }
+      .youtube-video { 
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        border: none; 
+        border-radius: 8px; 
+      }
+      .pagination-container { 
+        text-align: center; 
+        margin: 30px 0; 
+      }
+      .pagination { 
+        display: inline-block; 
+        padding: 0; 
+        margin: 0; 
+      }
+      .pagination li { 
+        display: inline; 
+        margin: 0 2px; 
+      }
+      .pagination a, .pagination span { 
+        display: inline-block; 
+        padding: 8px 12px; 
+        margin: 0 2px; 
+        text-decoration: none; 
+        border: 2px solid #ddd; 
+        color: #333; 
+        background: white; 
+        border-radius: 6px; 
+        transition: all 0.3s ease; 
+      }
+      .pagination a:hover { 
+        background: #800000; 
+        color: white; 
+        border-color: #800000; 
+      }
+      .pagination .current { 
+        background: #800000; 
+        color: white; 
+        border-color: #800000; 
+      }
+      /* 夜間模式 */
+      [data-theme="dark"] body { 
+        background-color: #1a1a1a !important; 
+        color: #e0e0e0 !important; 
+      }
+      [data-theme="dark"] .container { 
+        background-color: #1a1a1a; 
+        color: #e0e0e0; 
+      }
+      [data-theme="dark"] small { 
+        color: #a0a0a0 !important; 
+      }
+      [data-theme="dark"] p { 
+        color: #e0e0e0 !important; 
+      }
+      [data-theme="dark"] span { 
+        color: #e0e0e0 !important; 
+      }
+      [data-theme="dark"] a { 
+        color: #4ade80 !important; 
+      }
+      [data-theme="dark"] a:hover { 
+        color: #22c55e !important; 
+      }
+      /* 檔案資訊和時間樣式 */
+      .file-info { 
+        color: #666; 
+        font-size: 0.9rem; 
+      }
+      .post-time { 
+        color: #666; 
+        font-size: 0.9rem; 
+      }
+      .file-link { 
+        color: #6b0000; 
+        text-decoration: none; 
+      }
+      .file-link:hover { 
+        color: #8b0000; 
+        text-decoration: underline; 
+      }
+      [data-theme="dark"] .file-info { 
+        color: #a0a0a0 !important; 
+      }
+      [data-theme="dark"] .post-time { 
+        color: #a0a0a0 !important; 
+      }
+      [data-theme="dark"] .file-link { 
+        color: #4ade80 !important; 
+      }
+      [data-theme="dark"] .file-link:hover { 
+        color: #22c55e !important; 
+      }
+      [data-theme="dark"] h1 { 
+        color: #ff6b6b; 
+      }
+      [data-theme="dark"] h2 { 
+        color: #ff6b6b; 
+      }
+      [data-theme="dark"] .thread-form,
+      [data-theme="dark"] .post-form { 
+        background: #2d2d2d; 
+        border-color: #555; 
+      }
+      [data-theme="dark"] .thread-item { 
+        background: #2d2d2d; 
+        border-color: #555; 
+      }
+      [data-theme="dark"] .thread-title { 
+        color: #ff6b6b; 
+      }
+      [data-theme="dark"] .thread-meta { 
+        color: #a0a0a0; 
+      }
+      [data-theme="dark"] .thread-meta span { 
+        background: #3a3a3a; 
+      }
+      [data-theme="dark"] .post-box { 
+        background: #3a3a3a; 
+        border-color: #666; 
+      }
+      [data-theme="dark"] .post-header { 
+        border-color: #666; 
+      }
+      [data-theme="dark"] .post-name { 
+        color: #4ade80; 
+      }
+      [data-theme="dark"] .post-id { 
+        background: #ff6b6b; 
+      }
+      [data-theme="dark"] .btn { 
+        background: #ff6b6b; 
+      }
+      [data-theme="dark"] .btn:hover { 
+        background: #ff5252; 
+      }
+      [data-theme="dark"] .btn-secondary { 
+        background: #3a3a3a; 
+        color: #e0e0e0; 
+        border-color: #666; 
+      }
+      [data-theme="dark"] .form-label { 
+        color: #e0e0e0; 
+      }
+      [data-theme="dark"] .form-control { 
+        background: #2d2d2d; 
+        color: #e0e0e0; 
+        border-color: #666; 
+      }
+      [data-theme="dark"] .form-control:focus { 
+        border-color: #ff6b6b; 
+        box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1); 
+      }
+      [data-theme="dark"] .pagination a,
+      [data-theme="dark"] .pagination span { 
+        background: #2d2d2d; 
+        color: #e0e0e0; 
+        border-color: #666; 
+      }
+      [data-theme="dark"] .pagination a:hover { 
+        background: #ff6b6b; 
+        border-color: #ff6b6b; 
+      }
+      [data-theme="dark"] .pagination .current { 
+        background: #ff6b6b; 
+        border-color: #ff6b6b; 
+      }
+      [data-theme="dark"] .theme-toggle { 
+        background: #2d2d2d; 
+        border-color: #666; 
+        color: #e0e0e0; 
+      }
+      [data-theme="dark"] .theme-toggle:hover { 
+        background: #ff6b6b; 
+      }
+      
+      /* Footer 夜間模式 */
+      [data-theme="dark"] footer {
+        background-color: #2d2d2d !important;
+        border-color: #555 !important;
+        color: #a0a0a0 !important;
+      }
+      /* 圖片點擊放大縮小功能 */
+      .post-image.expanded { 
+        max-width: 100% !important; 
+        cursor: zoom-out; 
+      }
+      .post-image:not(.expanded) { 
+        max-width: 250px; 
+        cursor: zoom-in; 
+      }
+      .post-video.expanded { 
+        max-width: 100% !important; 
+        max-height: none !important; 
+        cursor: zoom-out; 
+      }
+      .post-video:not(.expanded) { 
+        max-width: 560px; 
+        max-height: 315px; 
+        cursor: zoom-in; 
+      }
+    </style>
   </head>
 
   <body>
+    <!-- 主題切換按鈕 -->
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+      <span id="theme-icon">🌙</span>
+      <span id="theme-text">夜間模式</span>
+    </button>
+
     <!-- R18 警訊覆蓋層 -->
     <div id="r18-overlay" style="
       position: fixed;
@@ -93,10 +524,66 @@
     
     <!-- 主要內容區域 -->
     <div id="main-content" style="display: block;">
-      <%= yield %>
+      <div class="container">
+        <%= yield %>
+      </div>
+      
+      <!-- Footer 版權資訊 -->
+      <footer style="
+        background-color: #e8ddd0;
+        border-top: 1px solid #c4b5a0;
+        padding: 20px 0;
+        margin-top: 40px;
+        text-align: center;
+        color: #666;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      ">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+          <p style="margin: 0;">
+            © <%= Date.current.year %> Zan Zas 所有。保留所有權利。
+          </p>
+        </div>
+      </footer>
     </div>
 
     <script>
+      // 主題切換功能
+      function toggleTheme() {
+        const body = document.body;
+        const currentTheme = body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        // 更新按鈕文字和圖示
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        
+        if (newTheme === 'dark') {
+          themeIcon.textContent = '☀️';
+          themeText.textContent = '日間模式';
+        } else {
+          themeIcon.textContent = '🌙';
+          themeText.textContent = '夜間模式';
+        }
+      }
+      
+      // 載入時檢查儲存的主題設定
+      (function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        
+        if (savedTheme === 'dark') {
+          themeIcon.textContent = '☀️';
+          themeText.textContent = '日間模式';
+        }
+      })();
+
       // 立即檢查年齡驗證狀態，避免閃爍
       (function() {
         const overlay = document.getElementById('r18-overlay');

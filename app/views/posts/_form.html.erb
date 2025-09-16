@@ -1,126 +1,25 @@
-<div class="post-form-box">
-
+<div class="post-form">
   <%= form_with(model: [discussion_thread, post], local: true, html: { multipart: true }) do |f| %>
-    <div class="form-row">
+    <div class="form-group">
       <label class="form-label">名稱</label>
-      <%= f.text_field :name, value: post.name || "", class: "form-input" %>
+      <%= f.text_field :name, value: post.name || "", class: "form-control", placeholder: "留空則顯示為匿名" %>
     </div>
 
-    <div class="form-row">
+    <div class="form-group">
       <label class="form-label">內文</label>
-      <%= f.text_area :content, rows: 5, class: "form-textarea" %>
+      <%= f.text_area :content, rows: 5, class: "form-control", placeholder: "請輸入回應內容..." %>
     </div>
 
-    <div class="form-row">
+    <div class="form-group">
       <label class="form-label">附加檔案 (檔案大小不能超過 5MB)</label>
-      <div class="file-upload-section">
-        <%= f.file_field :file, accept: "image/*,video/*", class: "file-input", id: "file_input" %>
-        <div class="file-info">
-          <small>支援格式：圖片 (JPEG, JPG, PNG, GIF, WebP) 或影片 (MP4, WebM)</small>
-        </div>
-      </div>
+      <%= f.file_field :file, accept: "image/*,video/*", class: "form-control" %>
+      <small style="color: var(--text-muted); font-size: 0.9rem;">
+        支援格式：圖片 (JPEG, JPG, PNG, GIF, WebP) 或影片 (MP4, WebM)
+      </small>
     </div>
 
-    <div class="form-submit">
-      <%= f.submit "送 出", class: "submit-button" %>
+    <div class="form-group">
+      <%= f.submit "送 出", class: "btn" %>
     </div>
   <% end %>
 </div>
-
-<style>
-  .post-form-box {
-    border: 1px solid #d48550;
-    background-color: #fdf9ed;
-    padding: 0;
-    margin-bottom: 30px;
-    width: 100%;
-    max-width: 700px;
-  }
-
-  .form-title {
-    background-color: #d45f00;
-    color: white;
-    font-weight: bold;
-    padding: 4px 10px;
-    font-size: 15px;
-    text-align: left;
-  }
-
-  .form-row {
-    display: flex;
-    align-items: flex-start;
-    padding: 6px 10px;
-    background-color: #fffaf0;
-    border-bottom: 1px solid #e0d0c0;
-  }
-
-  .form-label {
-    display: inline-block;
-    width: 90px;
-    font-weight: bold;
-    color: #663300;
-    margin-top: 5px;
-  }
-
-  .form-input {
-    flex: 1;
-    padding: 4px;
-    font-size: 14px;
-  }
-
-  .form-textarea {
-    flex: 1;
-    padding: 4px;
-    font-size: 14px;
-    resize: vertical;
-  }
-
-  .form-submit {
-    padding: 10px;
-    text-align: center;
-    background-color: #fffaf0;
-  }
-
-  .submit-button {
-    padding: 4px 12px;
-    font-size: 14px;
-    background-color: #eee5db;
-    border: 1px solid #d4bfa3;
-    cursor: pointer;
-  }
-
-  .submit-button:hover {
-    background-color: #f8f1e6;
-  }
-
-  .file-upload-section {
-    flex: 1;
-  }
-
-  .file-input {
-    flex: 1;
-    padding: 4px;
-    font-size: 14px;
-    margin-bottom: 5px;
-  }
-
-  .file-info {
-    color: #666;
-    font-size: 12px;
-  }
-</style>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const fileInput = document.getElementById('file_input');
-    
-    // 檔案選擇時的預覽功能（可選）
-    fileInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        console.log('選擇的檔案類型：', file.type);
-        console.log('檔案大小：', (file.size / 1024 / 1024).toFixed(2) + ' MB');
-      }
-    });
-  });
-</script>
