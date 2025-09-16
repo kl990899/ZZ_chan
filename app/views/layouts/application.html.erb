@@ -26,7 +26,7 @@
       height: 100%;
       background-color: rgba(0, 0, 0, 0.8);
       z-index: 10000;
-      display: flex;
+      display: none;
       justify-content: center;
       align-items: center;
       transition: opacity 0.3s ease-in-out;
@@ -92,7 +92,7 @@
     </div>
     
     <!-- 主要內容區域 -->
-    <div id="main-content" style="display: none;">
+    <div id="main-content" style="display: block;">
       <%= yield %>
     </div>
 
@@ -104,11 +104,13 @@
         
         // 檢查是否已經確認過年齡
         if (localStorage.getItem('ageConfirmed') === 'true') {
-          overlay.style.opacity = '0';
-          setTimeout(() => {
-            overlay.style.display = 'none';
-            mainContent.style.display = 'block';
-          }, 300);
+          // 已經確認過，直接隱藏覆蓋層
+          overlay.style.display = 'none';
+          mainContent.style.display = 'block';
+        } else {
+          // 未確認過，顯示覆蓋層
+          overlay.style.display = 'flex';
+          mainContent.style.display = 'none';
         }
       })();
       
@@ -118,13 +120,17 @@
         const enterBtn = document.getElementById('enter-btn');
         const exitBtn = document.getElementById('exit-btn');
         
-        // 再次檢查年齡驗證狀態（防止 localStorage 延遲載入）
-        if (localStorage.getItem('ageConfirmed') === 'true') {
-          overlay.style.opacity = '0';
-          setTimeout(() => {
-            overlay.style.display = 'none';
-            mainContent.style.display = 'block';
-          }, 300);
+        // 檢查驗證是否過期（24小時）
+        const confirmedTime = localStorage.getItem('ageConfirmedTime');
+        if (confirmedTime) {
+          const timeDiff = Date.now() - parseInt(confirmedTime);
+          const hoursDiff = timeDiff / (1000 * 60 * 60);
+          if (hoursDiff > 24) {
+            localStorage.removeItem('ageConfirmed');
+            localStorage.removeItem('ageConfirmedTime');
+            overlay.style.display = 'flex';
+            mainContent.style.display = 'none';
+          }
         }
         
         // 進入網站按鈕
@@ -137,11 +143,8 @@
             console.warn('無法存取 localStorage，使用 sessionStorage 作為備用');
             sessionStorage.setItem('ageConfirmed', 'true');
           }
-          overlay.style.opacity = '0';
-          setTimeout(() => {
-            overlay.style.display = 'none';
-            mainContent.style.display = 'block';
-          }, 300);
+          overlay.style.display = 'none';
+          mainContent.style.display = 'block';
         });
         
         // 離開網站按鈕
@@ -156,19 +159,6 @@
           // 可以重定向到其他網站或顯示離開訊息
           window.location.href = 'https://www.google.com';
         });
-        
-        // 檢查驗證是否過期（24小時）
-        const confirmedTime = localStorage.getItem('ageConfirmedTime');
-        if (confirmedTime) {
-          const timeDiff = Date.now() - parseInt(confirmedTime);
-          const hoursDiff = timeDiff / (1000 * 60 * 60);
-          if (hoursDiff > 24) {
-            localStorage.removeItem('ageConfirmed');
-            localStorage.removeItem('ageConfirmedTime');
-            overlay.style.display = 'flex';
-            mainContent.style.display = 'none';
-          }
-        }
         
         // 防止用戶通過其他方式繞過警告
         document.addEventListener('keydown', function(e) {
