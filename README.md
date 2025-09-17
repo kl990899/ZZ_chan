@@ -382,50 +382,30 @@ bundle exec rubocop -a
 ```nginx
 # HTTP 重定向到 HTTPS
 server {
-    listen 80;
-    server_name zz-chan.org;
-    return 301 https://$server_name$request_uri;
-}
+    listen 8443 ssl;
+    server_name zz-chan.org www.zz-chan.org;
 
-# HTTPS 主要配置
-server {
-    listen 443 ssl http2;
-    server_name zz-chan.org;
-    
-    root /path/to/ZZ_chan/public;
-    
-    # SSL 憑證設定 (由 Cloudflare 提供)
-    ssl_certificate /path/to/ssl/cert.pem;
-    ssl_certificate_key /path/to/ssl/private.key;
-    
-    # Passenger 設定
+    root /home/zan/ZZ_chan/public;
     passenger_enabled on;
-    passenger_ruby /path/to/ruby;
     passenger_app_env production;
-    
-    # 靜態檔案處理
-    location ~* \.(css|js|png|jpg|jpeg|gif|ico|svg)$ {
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
-    
-    # Active Storage 檔案
-    location /rails/active_storage/ {
-        proxy_pass http://localhost:3000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-    
-    # 主要應用程式
+    passenger_ruby /home/zan/.rvm/wrappers/ruby-3.1.4/ruby;
+
+    client_max_body_size 10M;
+
+    ssl_certificate /etc/ssl/zz-chan/fullchain.pem;
+    ssl_certificate_key /etc/ssl/zz-chan/origin.key;
+
     location / {
         try_files $uri @app;
     }
-    
     location @app {
         passenger_enabled on;
     }
+}
+server {
+    listen 8880;  # Cloudflare 可以用的 HTTP
+    server_name zz-chan.org www.zz-chan.org;
+    return 301 https://$host:8443$request_uri;
 }
 ```
 
