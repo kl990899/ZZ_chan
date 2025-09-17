@@ -20,8 +20,8 @@ class DiscussionThread::Create < Actor
   private
 
   def create_discussion_thread
-    thread_name = params[:name].presence || '匿名'
-    thread_title = params[:title].presence || '無題'
+    thread_name = params[:discussion_thread][:name].presence || '匿名'
+    thread_title = params[:discussion_thread][:title].presence || '無題'
 
     self.discussion_thread = DiscussionThread.new(
       name: thread_name,
@@ -32,7 +32,7 @@ class DiscussionThread::Create < Actor
   def create_initial_post
     post = discussion_thread.posts.build(
       name: discussion_thread.name,
-      content: params[:content],
+      content: params[:discussion_thread][:content],
       ip_address: request_ip,
       hashed_ip: generate_hashed_ip
     )
@@ -45,9 +45,9 @@ class DiscussionThread::Create < Actor
   end
 
   def attach_file_if_present(post)
-    return unless params[:file].present?
+    return unless params[:discussion_thread][:file].present?
 
-    uploaded_file = params[:file]
+    uploaded_file = params[:discussion_thread][:file]
     content_type = uploaded_file.content_type
 
     if image_content_type?(content_type)

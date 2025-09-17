@@ -15,7 +15,7 @@ class Post < ApplicationRecord
   validate :cannot_have_both_image_and_video
 
   # 檢查是否包含 YouTube 連結
-  def youtube_links?(_)
+  def youtube_links?(_ = nil)
     return false if content.blank?
 
     youtube_patterns = [
@@ -28,7 +28,7 @@ class Post < ApplicationRecord
   end
 
   # 獲取 YouTube 影片 ID
-  def youtube_video_ids(_)
+  def youtube_video_ids(_ = nil)
     return [] if content.blank?
 
     video_ids = []

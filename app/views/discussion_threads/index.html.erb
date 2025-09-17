@@ -1,5 +1,18 @@
 <!-- 樣式已移至 application.css -->
 
+<% content_for :title, "討論板首頁" %>
+<% content_for :description, "Zz Chan 討論板首頁，瀏覽最新的討論串和熱門話題，參與社群討論。" %>
+<% content_for :og_type, "website" %>
+
+<% content_for :structured_data do %>
+  <script type="application/ld+json">
+    <%= structured_data_breadcrumb([
+      { name: "首頁", url: root_url },
+      { name: "討論板", url: discussion_threads_url }
+    ]) %>
+  </script>
+<% end %>
+
 <h1>討論板</h1>
 
 <!-- 建立新討論串表單 -->
@@ -9,26 +22,24 @@
       <%= form.label :name, "發文者名稱 (可選)" %>
       <%= form.text_field :name, class: "form-control", placeholder: "留空則顯示為匿名" %>
     </div>
-    
     <div class="form-group">
       <%= form.label :title, "討論串標題 (可選)" %>
       <%= form.text_field :title, class: "form-control", placeholder: "留空則顯示為無題" %>
     </div>
-    
     <div class="form-group">
       <%= form.label :content, "內容" %>
-      <%= form.text_area :content, class: "form-control", rows: 4, placeholder: "請輸入討論內容..." %>
+      <%= form.text_area :content, class: "form-control", rows: 3, placeholder: "請輸入討論內容..." %>
     </div>
-    
-    <div class="form-group">
-      <%= form.label :file, "上傳圖片或影片 (可選)" %>
-      <%= form.file_field :file, class: "form-control", accept: "image/*,video/*" %>
-      <small style="color: #888; font-size: 0.9rem;">
-        支援格式：圖片 (JPEG, PNG, GIF, WebP) 或影片 (MP4, WebM)
-      </small>
+    <div class="form-group file-upload-group">
+      <label class="form-label">上傳圖片或影片 (可選)</label>
+      <div class="file-upload-container">
+        <%= form.file_field :file, class: "form-control file-input", accept: "image/*,video/*" %>
+        <small class="file-format-text">支援格式：圖片 (JPEG, PNG, GIF, WebP) 或影片 (MP4, WebM)</small>
+      </div>
+      <div class="submit-container">
+        <%= form.submit "建立討論串", class: "btn submit-btn" %>
+      </div>
     </div>
-    
-    <%= form.submit "建立討論串", class: "btn" %>
   <% end %>
 </div>
 
@@ -50,7 +61,7 @@
       </div>
 
       <!-- 顯示前5則貼文 -->
-      <% thread.posts.order(created_at: :desc).first(5).each do |post| %>
+      <% thread.posts.order(created_at: :asc).first(5).each do |post| %>
         <% post_data = post_data(post) %>
         <div class="post-box">
           <div class="post-header">

@@ -35,6 +35,9 @@ gem 'service_actor-rails'
 # Blueprint for data serialization
 gem 'blueprinter'
 
+# Image processing for OG images
+gem 'mini_magick'
+
 # Code style and formatting
 gem 'rubocop', require: false
 

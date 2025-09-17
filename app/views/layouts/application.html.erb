@@ -1,9 +1,63 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Zz Chan" %></title>
+    <title><%= content_for(:title) || meta_title %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="<%= content_for(:description) || meta_description %>">
+    <meta name="keywords" content="<%= content_for(:keywords) || meta_keywords %>">
+    <meta name="author" content="Zan Zas">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="<%= canonical_url(content_for(:canonical_url)) %>">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="<%= content_for(:og_type) || 'website' %>">
+    <meta property="og:url" content="<%= canonical_url(content_for(:canonical_url)) %>">
+    <meta property="og:title" content="<%= content_for(:og_title) || meta_title %>">
+    <meta property="og:description" content="<%= content_for(:og_description) || meta_description %>">
+    <meta property="og:image" content="<%= content_for(:og_image) || og_image_url %>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="<%= content_for(:og_image_type) || 'image/jpeg' %>">
+    <meta property="og:image:alt" content="<%= content_for(:og_title) || meta_title %>">
+    <meta property="og:site_name" content="Zz Chan">
+    <meta property="og:locale" content="zh_TW">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="<%= canonical_url(content_for(:canonical_url)) %>">
+    <meta name="twitter:title" content="<%= content_for(:og_title) || meta_title %>">
+    <meta name="twitter:description" content="<%= content_for(:og_description) || meta_description %>">
+    <meta name="twitter:image" content="<%= content_for(:og_image) || og_image_url %>">
+    
+    <!-- Additional SEO -->
+    <meta name="theme-color" content="#6b0000">
+    <meta name="msapplication-TileColor" content="#6b0000">
+    <meta name="application-name" content="Zz Chan">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      <%= structured_data_website %>
+    </script>
+    <%= yield :structured_data %>
+    
+    <!-- 立即設置主題，避免閃爍 -->
+    <script>
+      (function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const html = document.documentElement;
+        html.setAttribute('data-theme', savedTheme);
+        
+        if (savedTheme === 'dark') {
+          html.style.backgroundColor = '#1a1a1a';
+          document.body.style.backgroundColor = '#1a1a1a';
+          document.body.style.color = '#e0e0e0';
+        }
+      })();
+    </script>
+    
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -20,7 +74,7 @@
         font-family: "Segoe UI", "Arial", sans-serif; 
         background-color: #f5f0e8;
         color: #2d1b00;
-        transition: all 0.3s ease;
+        transition: background-color 0.3s ease, color 0.3s ease;
         margin: 0;
         padding: 0;
         min-height: 100vh;
@@ -31,6 +85,17 @@
         background-color: #f5f0e8;
         margin: 0;
         padding: 0;
+        transition: background-color 0.3s ease;
+      }
+      
+      /* 立即生效的夜間模式樣式，避免閃爍 */
+      html[data-theme="dark"] {
+        background-color: #1a1a1a !important;
+      }
+      
+      html[data-theme="dark"] body {
+        background-color: #1a1a1a !important;
+        color: #e0e0e0 !important;
       }
       .theme-toggle { 
         position: fixed; 
@@ -58,6 +123,7 @@
         padding: 0 20px; 
         background-color: #f5f0e8;
         min-height: 100vh;
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
       h1 { 
         color: #6b0000; 
@@ -67,12 +133,42 @@
         text-align: center; 
       }
       .thread-form, .post-form { 
-        background: #e8ddd0; 
-        padding: 25px; 
-        border: 2px solid #c4b5a0; 
-        border-radius: 12px; 
-        margin-bottom: 30px; 
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+        background: #e8ddd0;
+        padding: 8px; 
+        border: none; 
+        border-radius: 4px; 
+        margin-bottom: 10px; 
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.05);
+        position: relative;
+        overflow: hidden;
+      }
+      .thread-form::before, .post-form::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #6b0000, #8b0000, #6b0000);
+      }
+      .form-title {
+        color: #6b0000 !important;
+        font-size: 0.9rem;
+        margin: 0 0 6px 0;
+        font-weight: 600;
+        text-align: center;
+        position: relative;
+      }
+      .form-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 2px;
+        background: #6b0000;
+        border-radius: 1px;
       }
       .thread-list { 
         list-style: none; 
@@ -86,7 +182,7 @@
         margin-bottom: 25px; 
         padding: 25px; 
         box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
-        transition: all 0.3s ease; 
+        transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; 
         position: relative; 
       }
       .thread-item:hover { 
@@ -122,7 +218,7 @@
         border-radius: 8px; 
         padding: 20px; 
         margin-top: 15px; 
-        transition: all 0.3s ease; 
+        transition: background-color 0.3s ease, border-color 0.3s ease; 
       }
       .post-header { 
         display: flex; 
@@ -278,13 +374,24 @@
         border-color: #800000; 
       }
       /* 夜間模式 */
+      html[data-theme="dark"] {
+        background-color: #1a1a1a !important;
+        transition: background-color 0.3s ease !important;
+      }
+      body[data-theme="dark"] {
+        background-color: #1a1a1a !important;
+        color: #e0e0e0 !important;
+        transition: background-color 0.3s ease, color 0.3s ease !important;
+      }
       [data-theme="dark"] body { 
         background-color: #1a1a1a !important; 
         color: #e0e0e0 !important; 
+        transition: background-color 0.3s ease, color 0.3s ease !important;
       }
       [data-theme="dark"] .container { 
-        background-color: #1a1a1a; 
-        color: #e0e0e0; 
+        background-color: #1a1a1a !important; 
+        color: #e0e0e0 !important; 
+        transition: background-color 0.3s ease, color 0.3s ease !important;
       }
       [data-theme="dark"] small { 
         color: #a0a0a0 !important; 
@@ -331,22 +438,33 @@
         color: #22c55e !important; 
       }
       [data-theme="dark"] h1 { 
-        color: #ff6b6b; 
+        color: #e74c3c; 
       }
       [data-theme="dark"] h2 { 
-        color: #ff6b6b; 
+        color: #e74c3c; 
       }
       [data-theme="dark"] .thread-form,
       [data-theme="dark"] .post-form { 
-        background: #2d2d2d; 
-        border-color: #555; 
+        background: #2d2d2d;
+        border: none;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.1);
+      }
+      [data-theme="dark"] .thread-form::before,
+      [data-theme="dark"] .post-form::before {
+        background: linear-gradient(90deg, #e74c3c, #ff6b6b, #e74c3c);
+      }
+      [data-theme="dark"] .form-title {
+        color: #e74c3c !important;
+      }
+      [data-theme="dark"] .form-title::after {
+        background: #e74c3c;
       }
       [data-theme="dark"] .thread-item { 
         background: #2d2d2d; 
         border-color: #555; 
       }
       [data-theme="dark"] .thread-title { 
-        color: #ff6b6b; 
+        color: #e74c3c; 
       }
       [data-theme="dark"] .thread-meta { 
         color: #a0a0a0; 
@@ -365,13 +483,13 @@
         color: #4ade80; 
       }
       [data-theme="dark"] .post-id { 
-        background: #ff6b6b; 
+        background: #8b0000; 
       }
       [data-theme="dark"] .btn { 
-        background: #ff6b6b; 
+        background: #8b0000; 
       }
       [data-theme="dark"] .btn:hover { 
-        background: #ff5252; 
+        background: #a00000; 
       }
       [data-theme="dark"] .btn-secondary { 
         background: #3a3a3a; 
@@ -387,8 +505,8 @@
         border-color: #666; 
       }
       [data-theme="dark"] .form-control:focus { 
-        border-color: #ff6b6b; 
-        box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1); 
+        border-color: #8b0000; 
+        box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1); 
       }
       [data-theme="dark"] .pagination a,
       [data-theme="dark"] .pagination span { 
@@ -397,12 +515,12 @@
         border-color: #666; 
       }
       [data-theme="dark"] .pagination a:hover { 
-        background: #ff6b6b; 
-        border-color: #ff6b6b; 
+        background: #8b0000; 
+        border-color: #8b0000; 
       }
       [data-theme="dark"] .pagination .current { 
-        background: #ff6b6b; 
-        border-color: #ff6b6b; 
+        background: #8b0000; 
+        border-color: #8b0000; 
       }
       [data-theme="dark"] .theme-toggle { 
         background: #2d2d2d; 
@@ -410,7 +528,7 @@
         color: #e0e0e0; 
       }
       [data-theme="dark"] .theme-toggle:hover { 
-        background: #ff6b6b; 
+        background: #8b0000; 
       }
       
       /* Footer 夜間模式 */
@@ -525,7 +643,7 @@
     <!-- 主要內容區域 -->
     <div id="main-content" style="display: block;">
       <div class="container">
-        <%= yield %>
+      <%= yield %>
       </div>
       
       <!-- Footer 版權資訊 -->
@@ -550,12 +668,24 @@
     <script>
       // 主題切換功能
       function toggleTheme() {
-        const body = document.body;
-        const currentTheme = body.getAttribute('data-theme');
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         
-        body.setAttribute('data-theme', newTheme);
+        // 立即設置主題屬性
+        html.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
+        
+        // 立即設置背景色，避免閃爍
+        if (newTheme === 'dark') {
+          html.style.backgroundColor = '#1a1a1a';
+          document.body.style.backgroundColor = '#1a1a1a';
+          document.body.style.color = '#e0e0e0';
+        } else {
+          html.style.backgroundColor = '#f5f0e8';
+          document.body.style.backgroundColor = '#f5f0e8';
+          document.body.style.color = '#2d1b00';
+        }
         
         // 更新按鈕文字和圖示
         const themeIcon = document.getElementById('theme-icon');
@@ -570,17 +700,18 @@
         }
       }
       
-      // 載入時檢查儲存的主題設定
+      // 載入時更新按鈕狀態
       (function() {
         const savedTheme = localStorage.getItem('theme') || 'light';
-        document.body.setAttribute('data-theme', savedTheme);
-        
         const themeIcon = document.getElementById('theme-icon');
         const themeText = document.getElementById('theme-text');
-        
+
         if (savedTheme === 'dark') {
           themeIcon.textContent = '☀️';
           themeText.textContent = '日間模式';
+        } else {
+          themeIcon.textContent = '🌙';
+          themeText.textContent = '夜間模式';
         }
       })();
 
@@ -592,8 +723,8 @@
         // 檢查是否已經確認過年齡
         if (localStorage.getItem('ageConfirmed') === 'true') {
           // 已經確認過，直接隱藏覆蓋層
-          overlay.style.display = 'none';
-          mainContent.style.display = 'block';
+            overlay.style.display = 'none';
+            mainContent.style.display = 'block';
         } else {
           // 未確認過，顯示覆蓋層
           overlay.style.display = 'flex';
@@ -630,8 +761,8 @@
             console.warn('無法存取 localStorage，使用 sessionStorage 作為備用');
             sessionStorage.setItem('ageConfirmed', 'true');
           }
-          overlay.style.display = 'none';
-          mainContent.style.display = 'block';
+            overlay.style.display = 'none';
+            mainContent.style.display = 'block';
         });
         
         // 離開網站按鈕

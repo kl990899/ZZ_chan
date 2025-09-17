@@ -25,6 +25,7 @@ html {
   background-color: #f5f0e8;
   margin: 0;
   padding: 0;
+  transition: background-color 0.3s ease;
 }
 
 body {
@@ -32,17 +33,13 @@ body {
   line-height: 1.6;
   background-color: #f5f0e8;
   color: #2d1b00;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
   margin: 0;
   padding: 0;
   min-height: 100vh;
 }
 
-/* 夜間模式 */
-[data-theme="dark"] body {
-  background-color: #1a1a1a;
-  color: #e0e0e0;
-}
+/* 夜間模式 - 移到檔案末尾確保優先級 */
 
 /* 容器 */
 .container {
@@ -51,6 +48,11 @@ body {
   padding: 0 20px;
   background-color: #f5f0e8;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] .container {
+  background-color: #1a1a1a !important;
 }
 
 /* 標題 */
@@ -63,7 +65,7 @@ h1 {
 }
 
 [data-theme="dark"] h1 {
-  color: #ff6b6b;
+  color: #e74c3c;
 }
 
 h2 {
@@ -74,23 +76,106 @@ h2 {
 }
 
 [data-theme="dark"] h2 {
-  color: #ff6b6b;
+  color: #e74c3c;
 }
 
 /* 表單樣式 */
 .thread-form, .post-form {
   background: #e8ddd0;
-  padding: 25px;
-  border: 2px solid #c4b5a0;
-  border-radius: 12px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.thread-form::before, .post-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6b0000, #8b0000, #6b0000);
+}
+
+.form-title {
+  color: #6b0000 !important;
+  font-size: 0.9rem;
+  margin: 0 0 6px 0;
+  font-weight: 600;
+  text-align: center;
+  position: relative;
+}
+
+.form-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 2px;
+  background: #6b0000;
+  border-radius: 1px;
 }
 
 [data-theme="dark"] .thread-form,
 [data-theme="dark"] .post-form {
   background: #2d2d2d;
-  border-color: #555;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.1);
+}
+
+[data-theme="dark"] .thread-form::before,
+[data-theme="dark"] .post-form::before {
+  background: linear-gradient(90deg, #e74c3c, #ff6b6b, #e74c3c);
+}
+
+[data-theme="dark"] .form-title {
+  color: #e74c3c !important;
+}
+
+[data-theme="dark"] .form-title::after {
+  background: #e74c3c;
+}
+
+/* 檔案上傳區域樣式 */
+.file-upload-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.file-upload-container {
+  flex: 1;
+}
+
+.file-input {
+  margin-bottom: 8px;
+}
+
+.file-format-text {
+  color: #666;
+  font-size: 0.8rem;
+  display: block;
+  margin-top: 5px;
+}
+
+[data-theme="dark"] .file-format-text {
+  color: #a0a0a0;
+}
+
+.submit-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 3px;
+}
+
+.submit-btn {
+  min-width: 60px;
 }
 
 /* 討論串列表 */
@@ -102,12 +187,12 @@ h2 {
 
 .thread-item {
   background: #f8f3ed;
-  border: 2px solid #b8a99a;
-  border-radius: 12px;
-  margin-bottom: 25px;
-  padding: 25px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  transition: all 0.3s ease;
+  border: 1px solid #b8a99a;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  padding: 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
 }
 
@@ -117,24 +202,30 @@ h2 {
 }
 
 .thread-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  background: #f0e8d8 !important;
+}
+
+[data-theme="dark"] .thread-item:hover {
+  background: #404040 !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
 }
 
 .thread-header {
-  margin-bottom: 15px;
+  margin-bottom: 8px;
 }
 
 .thread-title {
-  margin: 0 0 8px 0;
-  font-size: 1.4rem;
+  margin: 0 0 4px 0;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #6b0000;
   text-decoration: none;
 }
 
 [data-theme="dark"] .thread-title {
-  color: #ff6b6b;
+  color: #e74c3c;
 }
 
 .thread-title:hover {
@@ -143,9 +234,9 @@ h2 {
 
 .thread-meta {
   color: #666;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   display: flex;
-  gap: 15px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -168,10 +259,16 @@ h2 {
 .post-box {
   background: #f2ede6;
   border: 1px solid #c4b5a0;
-  border-radius: 8px;
-  padding: 20px;
-  margin-top: 15px;
-  transition: all 0.3s ease;
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 6px;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.post-box:hover {
+  background: #f0e8d8 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  transform: translateY(-1px) !important;
 }
 
 [data-theme="dark"] .post-box {
@@ -179,15 +276,20 @@ h2 {
   border-color: #666;
 }
 
+[data-theme="dark"] .post-box:hover {
+  background: #4a4a4a !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+}
+
 .post-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
   border-bottom: 1px solid #c4b5a0;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 6px;
 }
 
 [data-theme="dark"] .post-header {
@@ -214,43 +316,62 @@ h2 {
 }
 
 [data-theme="dark"] .post-id {
-  background: #ff6b6b;
+  background: #8b0000;
 }
 
 .post-content {
-  margin: 15px 0;
-  line-height: 1.7;
+  margin: 6px 0;
+  line-height: 1.5;
   word-wrap: break-word;
 }
 
 /* 按鈕樣式 */
 .btn {
-  background: #6b0000;
+  background: linear-gradient(135deg, #6b0000 0%, #8b0000 100%);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: 6px 12px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 0.8rem;
+  font-weight: 600;
   transition: all 0.3s ease;
   text-decoration: none;
   display: inline-block;
   text-align: center;
+  box-shadow: 0 1px 3px rgba(107, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(107, 0, 0, 0.4);
 }
 
 [data-theme="dark"] .btn {
-  background: #ff6b6b;
-}
-
-.btn:hover {
-  background: #8b0000;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background: linear-gradient(135deg, #8b0000 0%, #a00000 100%);
+  box-shadow: 0 2px 8px rgba(139, 0, 0, 0.4);
 }
 
 [data-theme="dark"] .btn:hover {
-  background: #ff5252;
+  box-shadow: 0 6px 16px rgba(139, 0, 0, 0.5);
 }
 
 .btn-secondary {
@@ -267,14 +388,15 @@ h2 {
 
 /* 表單元素 */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 4px;
 }
 
 .form-label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 1px;
   font-weight: 500;
   color: #2d1b00;
+  font-size: 0.8rem;
 }
 
 [data-theme="dark"] .form-label {
@@ -283,31 +405,35 @@ h2 {
 
 .form-control {
   width: 100%;
-  padding: 12px;
-  border: 2px solid #c4b5a0;
-  border-radius: 8px;
-  background: #f8f3ed;
+  padding: 6px 10px;
+  border: 1px solid #d4c4b0;
+  border-radius: 4px;
+  background: #ffffff;
   color: #2d1b00;
-  font-size: 1rem;
+  font-size: 0.85rem;
   transition: all 0.3s ease;
-}
-
-[data-theme="dark"] .form-control {
-  background: #2d2d2d;
-  color: #e0e0e0;
-  border-color: #666;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
 }
 
 .form-control:focus {
   outline: none;
   border-color: #6b0000;
-  box-shadow: 0 0 0 3px rgba(107, 0, 0, 0.1);
+  box-shadow: 0 0 0 3px rgba(107, 0, 0, 0.1), inset 0 1px 3px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .form-control {
+  background: #1a1a1a;
+  color: #e0e0e0;
+  border-color: #555;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
 }
 
 [data-theme="dark"] .form-control:focus {
-  border-color: #ff6b6b;
-  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1), inset 0 1px 3px rgba(0,0,0,0.3);
 }
+
 
 /* 檔案資訊和時間樣式 */
 .file-info {
@@ -437,8 +563,8 @@ h2 {
 }
 
 [data-theme="dark"] .pagination a:hover {
-  background: #ff6b6b;
-  border-color: #ff6b6b;
+  background: #8b0000;
+  border-color: #8b0000;
 }
 
 .pagination .current {
@@ -448,8 +574,8 @@ h2 {
 }
 
 [data-theme="dark"] .pagination .current {
-  background: #ff6b6b;
-  border-color: #ff6b6b;
+  background: #8b0000;
+  border-color: #8b0000;
 }
 
 /* 主題切換按鈕 */
@@ -482,7 +608,7 @@ h2 {
 }
 
 [data-theme="dark"] .theme-toggle:hover {
-  background: #ff6b6b;
+  background: #8b0000;
 }
 
 /* 響應式設計 */
@@ -608,11 +734,11 @@ h2 {
 /* 表單樣式 */
 .thread-form, .post-form {
   background: var(--bg-secondary);
-  padding: 25px;
-  border: 2px solid var(--border-light);
-  border-radius: 12px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 12px var(--shadow);
+  padding: 15px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px var(--shadow);
   transition: all 0.3s ease;
 }
 
@@ -738,8 +864,8 @@ h2 {
 }
 
 .post-content {
-  margin: 15px 0;
-  line-height: 1.7;
+  margin: 6px 0;
+  line-height: 1.5;
   word-wrap: break-word;
 }
 
@@ -952,3 +1078,28 @@ h2 {
     transform: rotate(360deg);
   }
 }
+
+/* 夜間模式樣式 - 放在檔案末尾確保最高優先級 */
+html[data-theme="dark"] {
+  background-color: #1a1a1a !important;
+  transition: background-color 0.3s ease !important;
+}
+
+body[data-theme="dark"] {
+  background-color: #1a1a1a !important;
+  color: #e0e0e0 !important;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+[data-theme="dark"] body {
+  background-color: #1a1a1a !important;
+  color: #e0e0e0 !important;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+[data-theme="dark"] .container {
+  background-color: #1a1a1a !important;
+  color: #e0e0e0 !important;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+

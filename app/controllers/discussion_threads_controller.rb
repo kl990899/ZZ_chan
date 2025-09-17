@@ -1,5 +1,5 @@
 class DiscussionThreadsController < ApplicationController
-  before_action :set_discussion_thread, only: %i[show edit update destroy]
+  before_action :set_discussion_thread, only: %i[show edit destroy]
 
   # GET /discussion_threads or /discussion_threads.json
   def index
@@ -17,23 +17,10 @@ class DiscussionThreadsController < ApplicationController
   def show
     result = DiscussionThread::Find.call(id: params[:id])
 
-    if result.success?
-      @discussion_thread = result.discussion_thread
+    return redirect_to discussion_threads_path, alert: result.error unless result.success?
 
-      posts_result = Post::List.call(
-        discussion_thread_id: @discussion_thread.id,
-        params: params
-      )
-
-      if posts_result.success?
-        @posts = posts_result.posts
-        @post = @discussion_thread.posts.new
-      else
-        redirect_to discussion_threads_path, alert: posts_result.error
-      end
-    else
-      redirect_to discussion_threads_path, alert: result.error
-    end
+    @discussion_thread = result.discussion_thread
+    load_posts_and_seo_data
   end
 
   # GET /discussion_threads/new
@@ -61,6 +48,7 @@ class DiscussionThreadsController < ApplicationController
 
   # PATCH/PUT /discussion_threads/1 or /discussion_threads.json
   def update
+    set_discussion_thread
     result = DiscussionThread::Update.call(
       discussion_thread: @discussion_thread,
       params: params
@@ -96,6 +84,24 @@ class DiscussionThreadsController < ApplicationController
   end
 
   private
+
+  def load_posts_and_seo_data
+    posts_result = Post::List.call(
+      discussion_thread_id: @discussion_thread.id,
+      params: params
+    )
+
+    return redirect_to discussion_threads_path, alert: posts_result.error unless posts_result.success?
+
+    @posts = posts_result.posts
+    @post = @discussion_thread.posts.new
+    generate_seo_data
+  end
+
+  def generate_seo_data
+    seo_result = DiscussionThread::SeoData.call(discussion_thread: @discussion_thread)
+    @seo_data = seo_result if seo_result.success?
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_discussion_thread

@@ -1,9 +1,50 @@
+<% if @seo_data %>
+  <% 
+    content_for :title, @seo_data.title
+    content_for :description, @seo_data.description
+    content_for :keywords, @seo_data.keywords
+    content_for :og_type, "article"
+    content_for :og_title, @seo_data.og_data[:title]
+    content_for :og_description, @seo_data.og_data[:description]
+    content_for :og_image, @seo_data.og_data[:image]
+    content_for :og_image_type, @seo_data.og_image_type
+    content_for :canonical_url, @seo_data.og_data[:url]
+  %>
+<% else %>
+  <% 
+    thread_data = discussion_thread_og_data(@discussion_thread)
+    content_for :title, thread_data[:title]
+    content_for :description, thread_data[:description]
+    content_for :og_type, "article"
+    content_for :og_title, thread_data[:title]
+    content_for :og_description, thread_data[:description]
+    content_for :og_image, thread_data[:image]
+    content_for :canonical_url, thread_data[:url]
+  %>
+<% end %>
+
+<% content_for :structured_data do %>
+  <% if @seo_data %>
+    <script type="application/ld+json">
+      <%= @seo_data.structured_data.to_json.html_safe %>
+    </script>
+  <% else %>
+    <script type="application/ld+json">
+      <%= structured_data_discussion_thread(@discussion_thread) %>
+    </script>
+  <% end %>
+  <script type="application/ld+json">
+    <%= structured_data_breadcrumb([
+      { name: "首頁", url: root_url },
+      { name: "討論板", url: discussion_threads_url },
+      { name: @discussion_thread.title.presence || "無題", url: discussion_thread_url(@discussion_thread) }
+    ]) %>
+  </script>
+<% end %>
+
 <h1><%= @discussion_thread.title %></h1>
 
-<div class="post-form">
-  <h3>新增回應</h3>
-  <%= render 'posts/form', post: @post, discussion_thread: @discussion_thread %>
-</div>
+<%= render 'posts/form', post: @post, discussion_thread: @discussion_thread %>
 
 <%= link_to "← 回串列表", root_path, class: "btn btn-secondary" %>
 
@@ -96,7 +137,7 @@
   }
 
   .post-id {
-    color: #a00;
+    color:rgb(255, 255, 255);
     font-weight: bold;
     margin-left: 10px;
   }
@@ -200,28 +241,7 @@
     cursor: not-allowed;
   }
 
-  /* YouTube 內嵌樣式 */
-  .youtube-container {
-    margin-top: 8px;
-  }
-
-  .youtube-embed {
-    margin-top: 8px;
-    border: 1px solid #ddd;
-    max-width: 560px;
-    width: 100%;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    overflow: hidden;
-  }
-
-  .youtube-video {
-    width: 100%;
-    height: 315px;
-    max-width: 560px;
-    border: none;
-    display: block;
-  }
+  /* YouTube 內嵌樣式已移至 application.css */
 </style>
 
 <script>

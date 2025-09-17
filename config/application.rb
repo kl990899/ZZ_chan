@@ -11,6 +11,8 @@ module ZzChan
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.2
 
+    config.action_controller.raise_on_missing_callback_actions = false
+
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
@@ -23,5 +25,13 @@ module ZzChan
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    
+    # Enable ActiveStorage routes
+    config.active_storage.draw_routes = true
+    
+    # Set ActiveStorage URL options
+    config.after_initialize do
+      Rails.application.routes.default_url_options = { host: 'zz-chan.org', protocol: 'https' }
+    end
   end
 end
