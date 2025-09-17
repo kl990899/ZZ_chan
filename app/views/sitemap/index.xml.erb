@@ -27,33 +27,8 @@
       <changefreq>weekly</changefreq>
       <priority>0.8</priority>
       
-      <!-- 討論串圖片 -->
-      <% if thread.posts.joins(:image_attachment).exists? %>
-        <% thread.posts.joins(:image_attachment).each do |post| %>
-          <% if post.image.attached? %>
-            <image:image>
-              <image:loc><%= url_for(post.image) %></image:loc>
-              <image:title><%= post.name.presence || '無名' %> 的圖片</image:title>
-              <image:caption><%= post.content&.truncate(100) %></image:caption>
-            </image:image>
-          <% end %>
-        <% end %>
-      <% end %>
-
-      <!-- 討論串影片 -->
-      <% if thread.posts.joins(:video_attachment).exists? %>
-        <% thread.posts.joins(:video_attachment).each do |post| %>
-          <% if post.video.attached? %>
-            <video:video>
-              <video:thumbnail_loc><%= url_for(post.video.preview(resize_to_limit: [640, 480])) if post.video.previewable? %></video:thumbnail_loc>
-              <video:title><%= post.name.presence || '無名' %> 的影片</video:title>
-              <video:description><%= post.content&.truncate(200) %></video:description>
-              <video:content_loc><%= url_for(post.video) %></video:content_loc>
-              <video:player_loc><%= discussion_thread_url(thread) %></video:player_loc>
-            </video:video>
-          <% end %>
-        <% end %>
-      <% end %>
+      <!-- 暫時移除媒體內容以避免 URL 錯誤 -->
+      <!-- 討論串圖片和影片將在 URL 問題解決後重新添加 -->
     </url>
   <% end %>
 
