@@ -1,0 +1,7 @@
+# zz-chan 討論板
+# 網站: https://zz-chan.org
+# 作者: Zan Zas
+# 技術: Ruby on Rails 7.2, MySQL, Puma
+# 架構: Actor Pattern, Blueprinter
+# 主機: GIGABYTE BRIX BPCE-3350C
+# 授權: MIT License

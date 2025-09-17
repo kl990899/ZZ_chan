@@ -1,0 +1,10 @@
+Contact: mailto:strdt7c8kl@gmail.com
+Expires: 2025-12-31T23:59:59.000Z
+Encryption: https://zz-chan.org/pgp-key.txt # 暫無
+Preferred-Languages: zh-TW, en 
+Canonical: https://zz-chan.org/.well-known/security.txt # 暫無
+Policy: https://zz-chan.org/security-policy # 暫無
+
+# zz-chan 討論板安全政策
+# 如果您發現安全漏洞，請通過上述聯絡方式告知我們
+# 我們會盡快修復並感謝您的協助
