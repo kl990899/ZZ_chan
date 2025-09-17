@@ -36,6 +36,36 @@
 - **儲存**: 128GB SSD
 - **網路**: 內建 Gigabit Ethernet
 
+<details>
+<summary> check out my brand new potato pc </summary>
+
+### potato
+![GIGABYTE BRIX BPCE-3350C 主機照片](public/206896.jpg)
+
+### 硬體規格詳情
+- **型號**: GIGABYTE BRIX BPCE-3350C
+- **尺寸**: 110 x 100 x 50mm
+- **重量**: 約 0.5kg
+- **電源**: 19V/3.42A 外接變壓器
+- **散熱**: 被動式散熱設計，無風扇運作
+- **I/O 介面**: 
+  - 2x USB 3.0
+  - 2x USB 2.0
+  - 1x HDMI 2.0
+  - 1x DisplayPort 1.2
+  - 1x Gigabit Ethernet
+  - 1x 3.5mm 音訊孔
+  - 1x SD 卡讀卡機
+
+### 效能表現
+- **待機功耗**: < 10W
+- **滿載功耗**: < 15W
+- **噪音**: 0dB (無風扇設計)
+- **溫度**: 待機 35°C，滿載 65°C
+- **穩定性**: 24/7 
+
+</details>
+
 ### 網路設定
 - **網路環境**: 中華電信家用寬頻網路
 - **路由器**: H660WM-C (中華電信租借路由器)
@@ -151,7 +181,6 @@ bundle exec puma
 ```
 
 ## 系統架構
-
 ### 網路拓撲
 ```
 Internet → Cloudflare CDN → 中華電信家用寬頻 → H660WM-C Router → GIGABYTE BRIX (192.168.1.XXX)
