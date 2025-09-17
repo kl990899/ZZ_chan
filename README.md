@@ -39,7 +39,7 @@
 <details>
 <summary> check out my brand new potato pc </summary>
 
-### potato
+### 🐰potato🥚
 ![GIGABYTE BRIX BPCE-3350C 主機照片](public/206896.jpg)
 
 ### 硬體規格詳情
