@@ -6,6 +6,6 @@ Rails.application.routes.draw do
   end
 
   # SEO routes
-  get 'sitemap.xml', to: 'sitemap#index', defaults: { format: :xml }
-  get 'robots.txt', to: 'robots#index', defaults: { format: :text }
+  get 'sitemap.xml', to: 'sitemap#index', as: :sitemap, defaults: { format: :xml }
+  get 'robots.txt', to: 'robots#index', as: :robots, defaults: { format: :text }
 end

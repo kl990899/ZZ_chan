@@ -1,7 +1,7 @@
 <!-- 樣式已移至 application.css -->
 
 <% content_for :title, "討論板首頁" %>
-<% content_for :description, "Zz Chan 討論板首頁，瀏覽最新的討論串和熱門話題，參與社群討論。" %>
+<% content_for :description, "zz-chan 討論板首頁，瀏覽最新的討論串和熱門話題，參與社群討論。" %>
 <% content_for :og_type, "website" %>
 
 <% content_for :structured_data do %>
@@ -10,6 +10,12 @@
       { name: "首頁", url: root_url },
       { name: "討論板", url: discussion_threads_url }
     ]) %>
+  </script>
+  <script type="application/ld+json">
+    <%= structured_data_organization %>
+  </script>
+  <script type="application/ld+json">
+    <%= structured_data_webpage("討論板首頁", "zz-chan 討論板首頁，瀏覽最新的討論串和熱門話題，參與社群討論。", discussion_threads_url) %>
   </script>
 <% end %>
 

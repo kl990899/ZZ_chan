@@ -1,13 +1,40 @@
+# zz-chan 討論板 robots.txt
+# 最後更新: <%= Time.current.strftime('%Y-%m-%d') %>
+
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: <%= root_url %>sitemap.xml
-
-# Disallow admin areas (if any)
-Disallow: /admin/
-Disallow: /rails/
-
-# Allow all other content
+# 允許的頁面
 Allow: /discussion_threads/
 Allow: /posts/
+Allow: /sitemap.xml
+Allow: /robots.txt
+
+# 禁止的頁面
+Disallow: /admin/
+Disallow: /rails/
+Disallow: /assets/
+Disallow: /system/
+Disallow: /tmp/
+Disallow: /log/
+Disallow: /config/
+
+# 禁止特定檔案類型
+Disallow: *.log$
+Disallow: *.sql$
+Disallow: *.bak$
+Disallow: *.tmp$
+
+# 允許搜尋引擎抓取圖片和影片
+Allow: /rails/active_storage/blobs/
+Allow: /rails/active_storage/representations/
+
+# 爬取延遲 (秒)
+Crawl-delay: 1
+
+# Sitemap 位置
+Sitemap: <%= root_url %>sitemap.xml
+
+# 聯絡資訊
+# 網站: zz-chan.org
+# 管理員: Zan Zas

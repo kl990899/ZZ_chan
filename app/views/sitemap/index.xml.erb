@@ -1,25 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  
+  <!-- 首頁 -->
   <url>
     <loc><%= root_url %></loc>
-    <lastmod><%= Date.current.iso8601 %></lastmod>
+    <lastmod><%= Time.current.strftime('%Y-%m-%d') %></lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-  
+
+  <!-- 討論串列表頁 -->
   <url>
     <loc><%= discussion_threads_url %></loc>
-    <lastmod><%= Date.current.iso8601 %></lastmod>
+    <lastmod><%= Time.current.strftime('%Y-%m-%d') %></lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
-  
+
+  <!-- 各個討論串 -->
   <% @discussion_threads.each do |thread| %>
     <url>
       <loc><%= discussion_thread_url(thread) %></loc>
-      <lastmod><%= thread.updated_at.iso8601 %></lastmod>
+      <lastmod><%= thread.updated_at.strftime('%Y-%m-%d') %></lastmod>
       <changefreq>weekly</changefreq>
       <priority>0.8</priority>
+      
+      <!-- 討論串圖片 -->
+      <% if thread.posts.joins(:image_attachment).exists? %>
+        <% thread.posts.joins(:image_attachment).each do |post| %>
+          <% if post.image.attached? %>
+            <image:image>
+              <image:loc><%= url_for(post.image) %></image:loc>
+              <image:title><%= post.name.presence || '無名' %> 的圖片</image:title>
+              <image:caption><%= post.content&.truncate(100) %></image:caption>
+            </image:image>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <!-- 討論串影片 -->
+      <% if thread.posts.joins(:video_attachment).exists? %>
+        <% thread.posts.joins(:video_attachment).each do |post| %>
+          <% if post.video.attached? %>
+            <video:video>
+              <video:thumbnail_loc><%= url_for(post.video.preview(resize_to_limit: [640, 480])) if post.video.previewable? %></video:thumbnail_loc>
+              <video:title><%= post.name.presence || '無名' %> 的影片</video:title>
+              <video:description><%= post.content&.truncate(200) %></video:description>
+              <video:content_loc><%= url_for(post.video) %></video:content_loc>
+              <video:player_loc><%= discussion_thread_url(thread) %></video:player_loc>
+            </video:video>
+          <% end %>
+        <% end %>
+      <% end %>
     </url>
   <% end %>
+
+  <!-- 靜態頁面 -->
+  <url>
+    <loc><%= robots_url %></loc>
+    <lastmod><%= Time.current.strftime('%Y-%m-%d') %></lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
 </urlset>

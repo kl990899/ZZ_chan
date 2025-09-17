@@ -23,15 +23,15 @@ class DiscussionThread::SeoData < Actor
 
   def generate_title
     base_title = discussion_thread.title.presence || '無題'
-    "#{base_title} | Zz Chan 討論板"
+    "#{base_title} | zz-chan 討論板"
   end
 
   def generate_description
     first_post = discussion_thread.posts.order(:created_at).first
     if first_post&.content.present?
-      "#{first_post.content.truncate(150)} - 在 Zz Chan 討論板參與討論"
+      "#{first_post.content.truncate(150)} - 在 zz-chan 討論板參與討論"
     else
-      '查看這個討論串的內容，在 Zz Chan 討論板參與討論'
+      '查看這個討論串的內容，在 zz-chan 討論板參與討論'
     end
   end
 
@@ -95,9 +95,9 @@ class DiscussionThread::SeoData < Actor
 
   def generate_og_description(first_post)
     if first_post&.content&.present?
-      "#{first_post.content.truncate(150)} - 在 Zz Chan 討論板參與討論"
+      "#{first_post.content.truncate(150)} - 在 zz-chan 討論板參與討論"
     else
-      '查看這個討論串的內容，在 Zz Chan 討論板參與討論'
+      '查看這個討論串的內容，在 zz-chan 討論板參與討論'
     end
   end
 

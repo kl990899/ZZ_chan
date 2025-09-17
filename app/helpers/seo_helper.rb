@@ -1,6 +1,6 @@
 module SeoHelper # rubocop:disable Metrics/ModuleLength
   def meta_title(page_title = nil)
-    base_title = 'Zz Chan - 討論板'
+    base_title = 'zz-chan - 討論板'
     if page_title.present?
       "#{page_title} | #{base_title}"
     else
@@ -9,7 +9,7 @@ module SeoHelper # rubocop:disable Metrics/ModuleLength
   end
 
   def meta_description(description = nil)
-    description.presence || 'Zz Chan 是一個現代化的討論板平台，支援圖片、影片上傳和 YouTube 嵌入，提供優質的討論體驗。'
+    description.presence || 'zz-chan (zz-chan.org) 是一個現代化的討論板平台，支援圖片、影片上傳和 YouTube 嵌入，提供優質的討論體驗。'
   end
 
   def meta_keywords(keywords = nil)
@@ -85,9 +85,9 @@ module SeoHelper # rubocop:disable Metrics/ModuleLength
 
   def generate_thread_description(first_post)
     if first_post&.content&.present?
-      "#{first_post.content.truncate(150)} - 在 Zz Chan 討論板參與討論"
+      "#{first_post.content.truncate(150)} - 在 zz-chan 討論板參與討論"
     else
-      '查看這個討論串的內容，在 Zz Chan 討論板參與討論'
+      '查看這個討論串的內容，在 zz-chan 討論板參與討論'
     end
   end
 
@@ -122,18 +122,63 @@ module SeoHelper # rubocop:disable Metrics/ModuleLength
     {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
-      name: 'Zz Chan',
-      description: '現代化的討論板平台',
+      name: 'zz-chan',
+      alternateName: ['zz-chan.org', 'zz-chan 討論板'],
+      description: website_description,
       url: root_url,
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: {
-          '@type': 'EntryPoint',
-          urlTemplate: "#{root_url}discussion_threads?search={search_term_string}"
-        },
-        'query-input': 'required name=search_term_string'
-      }
+      inLanguage: 'zh-TW',
+      isAccessibleForFree: true,
+      audience: website_audience,
+      publisher: website_publisher,
+      potentialAction: website_search_action,
+      mainEntity: website_main_entity
     }.to_json.html_safe
+  end
+
+  def website_description
+    'zz-chan (zz-chan.org) 是一個現代化的討論板平台，支援圖片、影片上傳和 YouTube 嵌入，提供優質的討論體驗'
+  end
+
+  def website_audience
+    {
+      '@type': 'Audience',
+      audienceType: '討論板用戶'
+    }
+  end
+
+  def website_publisher
+    {
+      '@type': 'Organization',
+      name: 'zz-chan',
+      alternateName: 'zz-chan.org',
+      url: root_url,
+      logo: {
+        '@type': 'ImageObject',
+        url: "#{root_url}icon.png"
+      }
+    }
+  end
+
+  def website_search_action
+    {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: "#{root_url}discussion_threads?search={search_term_string}"
+      },
+      'query-input': 'required name=search_term_string'
+    }
+  end
+
+  def website_main_entity
+    {
+      '@type': 'DiscussionForum',
+      name: 'zz-chan 討論板',
+      alternateName: 'zz-chan.org 討論板',
+      description: '一個現代化的討論板平台，支援圖片、影片上傳和 YouTube 嵌入',
+      url: discussion_threads_url,
+      inLanguage: 'zh-TW'
+    }
   end
 
   def structured_data_discussion_thread(thread)
@@ -141,19 +186,95 @@ module SeoHelper # rubocop:disable Metrics/ModuleLength
       '@context': 'https://schema.org',
       '@type': 'DiscussionForumPosting',
       headline: thread.title.presence || '無題',
-      description: thread.posts.first&.content&.truncate(200) || '討論串內容',
+      description: thread_description(thread),
       url: discussion_thread_url(thread),
       dateCreated: thread.created_at.iso8601,
       dateModified: thread.updated_at.iso8601,
-      author: {
-        '@type': 'Person',
-        name: thread.name.presence || '匿名'
+      inLanguage: 'zh-TW',
+      isPartOf: discussion_forum_info,
+      author: thread_author(thread),
+      interactionStatistic: thread_interaction_stats(thread),
+      about: thread_about(thread)
+    }.to_json.html_safe
+  end
+
+  def thread_description(thread)
+    thread.posts.first&.content&.truncate(200) || '討論串內容'
+  end
+
+  def discussion_forum_info
+    {
+      '@type': 'DiscussionForum',
+      name: 'zz-chan 討論板',
+      url: discussion_threads_url
+    }
+  end
+
+  def thread_author(thread)
+    {
+      '@type': 'Person',
+      name: thread.name.presence || '匿名'
+    }
+  end
+
+  def thread_interaction_stats(thread)
+    {
+      '@type': 'InteractionCounter',
+      interactionType: 'https://schema.org/CommentAction',
+      userInteractionCount: thread.posts.count
+    }
+  end
+
+  def thread_about(thread)
+    {
+      '@type': 'Thing',
+      name: thread.title.presence || '討論話題'
+    }
+  end
+
+  def structured_data_organization
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'zz-chan',
+      alternateName: ['zz-chan.org', 'zz-chan 討論板'],
+      url: root_url,
+      logo: {
+        '@type': 'ImageObject',
+        url: "#{root_url}icon.png"
       },
-      interactionStatistic: {
-        '@type': 'InteractionCounter',
-        interactionType: 'https://schema.org/CommentAction',
-        userInteractionCount: thread.posts.count
-      }
+      description: 'zz-chan (zz-chan.org) 現代化的討論板平台，支援圖片、影片上傳和 YouTube 嵌入',
+      foundingDate: '2024',
+      founder: {
+        '@type': 'Person',
+        name: 'Zan Zas'
+      },
+      sameAs: [
+        root_url
+      ]
+    }.to_json.html_safe
+  end
+
+  def structured_data_webpage(page_title, page_description, page_url)
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: page_title,
+      description: page_description,
+      url: page_url,
+      inLanguage: 'zh-TW',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: 'zz-chan',
+        url: root_url
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'zz-chan',
+        url: root_url
+      },
+      datePublished: Time.current.iso8601,
+      dateModified: Time.current.iso8601
     }.to_json.html_safe
   end
 end
