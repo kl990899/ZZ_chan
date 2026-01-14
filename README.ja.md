@@ -1,5 +1,16 @@
 # ZZ_chan
 
+<div align="center">
+
+**🌐 語言 / Language / 言語**
+
+[![繁體中文](https://img.shields.io/badge/繁體中文-Chinese%20Traditional-green)](README.md)
+[![日本語](https://img.shields.io/badge/日本語-現在の言語-brightgreen)](README.ja.md)
+
+</div>
+
+---
+
 Rails 7.2 ベースの掲示板アプリケーション。Actor パターンでビジネスロジックを処理し、Blueprinter でデータシリアライゼーションを行います。
 
 > **作者**: Zan Zas  

@@ -1,5 +1,16 @@
 # ZZ_chan
 
+<div align="center">
+
+**🌐 語言 / Language / 言語**
+
+[![繁體中文](https://img.shields.io/badge/繁體中文-當前語言-brightgreen)](README.md)
+[![日本語](https://img.shields.io/badge/日本語-Japanese-blue)](README.ja.md)
+
+</div>
+
+---
+
 一個基於 Rails 7.2 的討論板應用程式，採用 Actor 模式進行業務邏輯處理，並使用 Blueprinter 進行資料序列化。
 
 > **作者**: Zan Zas  
