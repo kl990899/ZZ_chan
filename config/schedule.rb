@@ -18,7 +18,11 @@ set :environment, :production
 # end
 
 # 如果需要每 6 小時檢查一次，可以使用：
-every 6.hours do
+every 3.hours do
   rake 'cloudflare:update_dns'
 end
 
+# 每 15 分鐘自動清除廣告/垃圾訊息
+every 15.minutes do
+  rake 'spam:cleanup'
+end
